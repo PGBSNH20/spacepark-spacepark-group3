@@ -9,8 +9,7 @@ namespace SpacePark.Test
         [TestMethod]
         public void TestMethod1()
         {
-            Class1 c = new Class1();
-            Assert.AreEqual("Test", c.Test());
+
         }
     }
 }

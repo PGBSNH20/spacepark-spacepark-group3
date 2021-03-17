@@ -24,7 +24,7 @@ namespace SpacePark.Networking
             var jsonObject = JObject.Parse(result.Content);
 
             List<string> names = new List<string>();
-            foreach(var entry in jsonObject["results"])
+            foreach (var entry in jsonObject["results"])
             {
                 names.Add(entry["name"].ToString());
             }
