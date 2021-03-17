@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpacePark.Networking;
+using System;
 
 namespace SpacePark
 {
@@ -6,7 +7,8 @@ namespace SpacePark
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            StarWarsAPI api = new StarWarsAPI();
+            api.UserFromStarWars("");
         }
     }
 }
