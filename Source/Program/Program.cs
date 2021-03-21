@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using SpacePark;
+using SpacePark.Models;
+using SpacePark.Configuration;
 
 namespace Program
 {
@@ -7,23 +10,23 @@ namespace Program
     {
         static void Main(string[] args)
         {
-            Class1 c = new Class1();
-            Console.WriteLine(c.Test());
-
-            using (var ctx = new Context())
-            {
-                var user = new User() {
-                    Id = 1,
-                    Name = "Luke Skywalker",                    
-                    ArrivalTime = DateTime.Now,
-                    DepartureTime = DateTime.Now.AddHours(5),
-                    PaymentAmount = 100,
+            
+            
+            Config config = new AppConfig().GetConfig();
+            // using (var ctx = new Context())
+            // {
+            //     var user = new User() {
+            //         Id = 1,
+            //         Name = "Luke Skywalker",                    
+            //         ArrivalTime = DateTime.Now,
+            //         DepartureTime = DateTime.Now.AddHours(5),
+            //         PaymentAmount = 100,
                 
-                };
+            //     };
 
-                ctx.Users.Add(user);
-                ctx.SaveChanges();
-            }
+            //     ctx.Users.Add(user);
+            //     ctx.SaveChanges();
+            // }
         }
     }
 }
