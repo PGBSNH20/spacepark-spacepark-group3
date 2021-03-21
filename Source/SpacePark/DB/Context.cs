@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.IO;
+using SpacePark.Models;
 
 
 namespace SpacePark
@@ -15,7 +14,7 @@ namespace SpacePark
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=localhost\\SQLEXPRESS, 1433;Initial Catalog=SpacePark;Trusted_Connection=True;");
+            optionsBuilder.UseNpgsql(@"Data Source=localhost\\SQLEXPRESS, 1433;Initial Catalog=SpacePark;Trusted_Connection=True;");
         }
 
     }
