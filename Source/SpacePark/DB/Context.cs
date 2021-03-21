@@ -6,15 +6,16 @@ namespace SpacePark
 {
     public class Context : DbContext
     {
-        public Context() : base()
+        private string _connString;
+        public Context(Config config) : base()
         {
-
+            this._connString = config.ConnectionString;
         }
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"Data Source=localhost\\SQLEXPRESS, 1433;Initial Catalog=SpacePark;Trusted_Connection=True;");
+            optionsBuilder.UseNpgsql(this._connString);
         }
 
     }

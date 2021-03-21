@@ -23,7 +23,7 @@ namespace SpacePark.Configuration
 
             Console.WriteLine($"Config value {programConfig}, Name: {programConfig.Name}, URL: {programConfig.APIUrl}, Conn: {programConfig.ConnectionString}");
 
-            return new SpacePark.Models.Config{};
+            return programConfig;
         }
     }
 }
