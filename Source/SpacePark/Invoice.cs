@@ -8,11 +8,13 @@ namespace SpacePark
 {
     class Invoice
     {
-        public int InvoiceId { get; set; }
-        public DateTime RegistrationTime { get; set; }
+      
+        public DateTime StartedTime { get; set; }
         public DateTime EndTime { get; set; }
-        public double Price { get; set; }
-        
+        public double TotalTime { get; set; }
+        public double HourlyPrice { get; set; }
+        public double TotalPrice { get; set; }
+
 
     }
 }
