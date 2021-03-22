@@ -9,6 +9,5 @@ namespace SpacePark.Models
         public DateTime ArrivalTime { get; set; }
         public DateTime DepartureTime { get; set; }
         public double PaymentAmount { get; set; }
-
     }
 }
