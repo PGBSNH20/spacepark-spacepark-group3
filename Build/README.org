@@ -1,0 +1,8 @@
+* Setup
+** Applications
+*** Requiered
+- [[https:docker.com][Docker]]
+
+*** Recommended
+- [[https:jetbrains.com/datagrip/][Datagrip]] 
+
