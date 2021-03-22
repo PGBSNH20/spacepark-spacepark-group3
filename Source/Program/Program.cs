@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using SpacePark;
+using SpacePark.DB;
 using SpacePark.Models;
+using SpacePark.DB.Models;
 using SpacePark.Configuration;
 
 namespace Program
@@ -13,9 +14,9 @@ namespace Program
             
             
             Config config = new AppConfig().GetConfig();
-            using (var ctx = new Context(config))
+            using (var ctx = new AppDbContext())
             {
-                var user = new User() {
+                var user = new DBUser() {
                     Id = 1,
                     Name = "Luke Skywalker",                    
                     ArrivalTime = DateTime.Now,
