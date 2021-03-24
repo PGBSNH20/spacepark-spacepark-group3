@@ -60,12 +60,7 @@ namespace Program
 
             AnsiConsole.Render(tree);
             var goBack = AnsiConsole.Confirm("Go back");
-            if (goBack)
-            {
-                AnsiConsole.Console.Clear(true);
-                DisplayMenu();
-            }
-            else
+            if (!goBack)
             {
                 ExitProgram();
             }
@@ -113,7 +108,12 @@ namespace Program
         {
             this.applicationName = applicationName;
             WelcomeMessage();
-            DisplayMenu();
+
+            while (true)
+            {
+                DisplayMenu();
+                AnsiConsole.Console.Clear(true);
+            }
         }
 
         private void ExitProgram()
