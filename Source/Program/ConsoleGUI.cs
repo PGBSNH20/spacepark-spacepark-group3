@@ -6,16 +6,38 @@ namespace Program
 {
     class ConsoleGUI
     {
-        private void WelcomeMessage()
+        private void WelcomeMessage(string applicationName)
         {
-            AnsiConsole.MarkupLine("[red on black]SpacePark - Developed by Adam, Leo, Aswan & Kadar[/]");
+            AnsiConsole.MarkupLine($"[red on black]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
+        }
+
+        private void StartParking()
+        {
+
+        }
+
+        private void ShowAvailableParking()
+        {
+            var tree = new Tree("Available parking slots");
+            var slots = tree.AddNode("[blue]Parking[/]");
+            slots.AddNode(new Table().RoundedBorder()
+            .AddColumn("First floor")
+            .AddColumn("Second floor")
+            .AddRow("Taekn", "Available")
+            .AddRow("Available", "Taken")
+            .AddRow("Available", "Taken"));
+
+            AnsiConsole.Render(tree);
         }
 
         private void DisplayMenu()
         {
-            List<string> availableChoices = new List<string>(){"Start parking",
-            "Check available parking spots",
-            "Quit"};
+            List<string> availableChoices = new()
+            {
+                "Start parking",
+                "Check available parking spots",
+                "Quit"
+            };
 
             var selectedChoice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -25,11 +47,11 @@ namespace Program
 
             if (selectedChoice == availableChoices[0])
             {
-
+                StartParking();
             }
             else if (selectedChoice == availableChoices[1])
             {
-
+                ShowAvailableParking();
             }
             else
             {
@@ -39,7 +61,7 @@ namespace Program
 
         public void LoadGUI(string applicationName)
         {
-            WelcomeMessage();
+            WelcomeMessage(applicationName);
             DisplayMenu();
         }
     }

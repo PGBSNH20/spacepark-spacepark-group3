@@ -8,7 +8,7 @@ namespace SpacePark.Networking
     public class StarWarsAPI
     {
         readonly string apiUrl = "https://swapi.dev/api";
-        RestClient client;
+        private readonly RestClient client;
 
         public StarWarsAPI()
         {
@@ -17,14 +17,14 @@ namespace SpacePark.Networking
 
         public bool UserFromStarWars(string name)
         {
-            RestRequest request = new RestRequest("/people/", Method.GET);
+            RestRequest request = new("/people/", Method.GET);
             request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
 
             var result = client.Execute(request);
             var jsonObject = JObject.Parse(result.Content);
 
-            List<string> names = new List<string>();
-            foreach(var entry in jsonObject["results"])
+            List<string> names = new();
+            foreach (var entry in jsonObject["results"])
             {
                 names.Add(entry["name"].ToString());
             }
