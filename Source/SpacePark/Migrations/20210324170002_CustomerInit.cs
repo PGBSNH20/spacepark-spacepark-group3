@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace SpacePark.Migrations
 {
-    public partial class UserMigration : Migration
+    public partial class CustomerInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,16 +11,13 @@ namespace SpacePark.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    ArrivalTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    DepartureTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    PaymentAmount = table.Column<double>(type: "double precision", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.ID);
                 });
         }
 

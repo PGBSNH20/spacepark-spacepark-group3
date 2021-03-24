@@ -14,20 +14,20 @@ namespace Program
             
             
             Config config = new AppConfig().GetConfig();
-            using (var ctx = new AppDbContext())
-            {
-                var user = new DBUser() {
-                    Id = 1,
-                    Name = "Luke Skywalker",                    
-                    ArrivalTime = DateTime.Now,
-                    DepartureTime = DateTime.Now.AddHours(5),
-                    PaymentAmount = 100,
+            // using (var ctx = new AppDbContext())
+            // {
+            //     var user = new DBUser() {
+            //         Id = 1,
+            //         Name = "Luke Skywalker",                    
+            //         ArrivalTime = DateTime.Now,
+            //         DepartureTime = DateTime.Now.AddHours(5),
+            //         PaymentAmount = 100,
                 
-                };
+            //     };
 
-                ctx.Users.Add(user);
-                ctx.SaveChanges();
-            }
+            //     ctx.Users.Add(user);
+            //     ctx.SaveChanges();
+            // }
         }
     }
 }

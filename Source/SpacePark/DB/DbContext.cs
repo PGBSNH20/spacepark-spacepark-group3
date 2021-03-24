@@ -12,7 +12,9 @@ namespace SpacePark.DB
         {
             this._connString = "host=localhost;port=5432;database=SpacePark;user id=admin;password=secret";
         }
-        public DbSet<DBUser> Users { get; set; }
+        public DbSet<DBCustomer> Customer { get; set; }
+        public DbSet<DBShip> Ship { get; set; }
+        public DbSet<DBSpot> Spot { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
