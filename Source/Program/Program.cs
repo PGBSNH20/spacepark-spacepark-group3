@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using SpacePark.DB;
-using SpacePark.Models;
-using SpacePark.DB.Models;
-using SpacePark.Configuration;
+﻿using SpacePark.Config;
 
 namespace Program
 {
@@ -13,7 +8,7 @@ namespace Program
         {
             
             
-            Config config = new AppConfig().GetConfig();
+            AppConfig config = new AppConfig().GetConfig();
             // using (var ctx = new AppDbContext())
             // {
             //     var user = new DBUser() {
