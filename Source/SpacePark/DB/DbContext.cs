@@ -25,15 +25,15 @@ namespace SpacePark.DB
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DBSpot>().HasData(
-                new DBSpot(1, 20, 120),
-                new DBSpot(2, 20, 120),
-                new DBSpot(3, 50, 280),
-                new DBSpot(4, 50, 280),
-                new DBSpot(5, 50, 280),
-                new DBSpot(6, 100, 600),
-                new DBSpot(7, 100, 600),
-                new DBSpot(8, 100, 1600),
-                new DBSpot(9, 1000, 8000)
+                new DBSpot () {ID=1, Size=20, Price=120},
+                new DBSpot () {ID=2, Size=20, Price=120},
+                new DBSpot () {ID=3, Size=50, Price=280},
+                new DBSpot () {ID=4, Size=50, Price=280},
+                new DBSpot () {ID=5, Size=50, Price=280},
+                new DBSpot () {ID=6, Size=100, Price=600},
+                new DBSpot () {ID=7, Size=100, Price=600},
+                new DBSpot () {ID=8, Size=100, Price=1600},
+                new DBSpot () {ID=9, Size=1000, Price=8000}
             );
         }
     }
