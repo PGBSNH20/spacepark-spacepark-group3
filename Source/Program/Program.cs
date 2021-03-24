@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO;
-using SpacePark;
-using SpacePark.Models;
-using SpacePark.Configuration;
-using System.Linq;
-using System.Collections.Generic;
+using SpacePark.Config;
+using SpacePark.DB.Interfaces;
+using SpacePark.DB.Queries;
+using System;
 
 namespace Program
 {
@@ -12,32 +9,26 @@ namespace Program
     {
         static void Main(string[] args)
         {
+            
+            AppConfig config = new AppConfig().GetConfig();
 
-            var ParkedUsers = new List<User>();
-            Config config = new AppConfig().GetConfig();
-            using (var ctx = new Context(config))
-            {
-                var user = new User() {
-                    Id =4,
-                    Name = "Luke Skywalker",                    
-                    ArrivalTime = DateTime.Now,
-                    DepartureTime = null,
-                    PaymentAmount = 100.0,
-                
-                };
+            ISpotQuery spotQuery = new SpotQuery();
 
-                ctx.Users.Add(user);
-                ctx.SaveChanges();
-            }
-
-            using (var ctx = new Context(config))
-            {
-                var parkedUsers = ctx.Users.Where(user => !user.DepartureTime.HasValue);
-                foreach(var parkedUser in parkedUsers)
-                {
-                    ParkedUsers.Add(parkedUser);
-                }
-            }
+            spotQuery.GetSpots().ForEach(e => {
+                Console.WriteLine($"Object: {e.ID}, {e.Price}, {e.Size}");
+            });
+            // using (var ctx = new AppDbContext())
+            // {
+            //     var user = new DBUser() {
+            //         Id = 1,
+            //         Name = "Luke Skywalker",                    
+            //         ArrivalTime = DateTime.Now,
+            //         DepartureTime = DateTime.Now.AddHours(5),
+            //         PaymentAmount = 100,
+            //     };
+            //     ctx.Users.Add(user);
+            //     ctx.SaveChanges();
+            // }
         }
     }
 }
