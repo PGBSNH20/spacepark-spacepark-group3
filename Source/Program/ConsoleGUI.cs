@@ -11,9 +11,39 @@ namespace Program
             AnsiConsole.MarkupLine($"[red on black]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
         }
 
-        private void StartParking()
+        private void StartParking(bool randomSlot)
         {
 
+        }
+
+        private void InitiateParking()
+        {
+            // TODO Check if there are any available slots
+            List<string> availableChoices = new()
+            {
+                "Park at any available spot",
+                "Choose a specific spot",
+                "Go back"
+            };
+
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]How would you like to park[/]?")
+                .PageSize(3)
+                .AddChoices(availableChoices));
+
+            if (selectedChoice == availableChoices[0])
+            {
+                StartParking(false);
+            }
+            else if (selectedChoice == availableChoices[1])
+            {
+                StartParking(true);
+            }
+            else
+            {
+                DisplayMenu();
+            }
         }
 
         private void ShowAvailableParking()
@@ -23,7 +53,7 @@ namespace Program
             slots.AddNode(new Table().RoundedBorder()
             .AddColumn("First floor")
             .AddColumn("Second floor")
-            .AddRow("Taekn", "Available")
+            .AddRow("Taken", "Available")
             .AddRow("Available", "Taken")
             .AddRow("Available", "Taken"));
 
@@ -47,7 +77,7 @@ namespace Program
 
             if (selectedChoice == availableChoices[0])
             {
-                StartParking();
+                InitiateParking();
             }
             else if (selectedChoice == availableChoices[1])
             {

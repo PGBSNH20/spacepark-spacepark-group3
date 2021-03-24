@@ -27,7 +27,6 @@ namespace Program
 
             ConsoleGUI gui = new ConsoleGUI();
             gui.LoadGUI(config.Name);
-
         }
     }
 }
