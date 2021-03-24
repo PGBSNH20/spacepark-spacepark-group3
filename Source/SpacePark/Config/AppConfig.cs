@@ -24,8 +24,6 @@ namespace SpacePark.Config
 
             programConfig.ConnectionString = config.GetConnectionString("Default");
 
-            Console.WriteLine($"Config value {programConfig}, Name: {programConfig.Name}, URL: {programConfig.APIUrl}, Conn: {programConfig.ConnectionString}");
-
             return programConfig;
         }
     }
