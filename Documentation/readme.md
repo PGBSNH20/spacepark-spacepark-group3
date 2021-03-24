@@ -3,6 +3,7 @@
 Use this file to fill in your documentation
 
 2021-03-17
+
 First day in project. We talked about our ideas and then we create many tasks to do to the project.Created a model (class) of the user, Consol GUI/Menu to develop the console menus & interfaces (user-perspective).
 
 2021-03-18
