@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace SpacePark.Migrations
 {
-    public partial class ParkingAndSpotMigration : Migration
+    public partial class SpotMigrationAndSeeding : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,6 +19,22 @@ namespace SpacePark.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Spot", x => x.ID);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Spot",
+                columns: new[] { "ID", "Price", "Size" },
+                values: new object[,]
+                {
+                    { 1, 120m, 20 },
+                    { 2, 120m, 20 },
+                    { 3, 280m, 50 },
+                    { 4, 280m, 50 },
+                    { 5, 280m, 50 },
+                    { 6, 600m, 100 },
+                    { 7, 600m, 100 },
+                    { 8, 1600m, 100 },
+                    { 9, 8000m, 1000 }
                 });
         }
 

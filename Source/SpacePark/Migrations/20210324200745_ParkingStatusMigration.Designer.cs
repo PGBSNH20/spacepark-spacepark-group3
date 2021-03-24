@@ -2,16 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SpacePark.DB;
 
 namespace SpacePark.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SpaceParkDbContext))]
+    [Migration("20210324200745_ParkingStatusMigration")]
+    partial class ParkingStatusMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace SpacePark.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBCustomer", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Customer", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -34,7 +36,7 @@ namespace SpacePark.Migrations
                     b.ToTable("Customer");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBParkingStatus", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.ParkingStatus", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -62,7 +64,7 @@ namespace SpacePark.Migrations
                     b.ToTable("ParkingStatus");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -87,7 +89,7 @@ namespace SpacePark.Migrations
                     b.ToTable("Ship");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBSpot", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Spot", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -103,17 +105,73 @@ namespace SpacePark.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Spot");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Price = 120m,
+                            Size = 20
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Price = 120m,
+                            Size = 20
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Price = 600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Price = 600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Price = 1600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Price = 8000m,
+                            Size = 1000
+                        });
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBParkingStatus", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.ParkingStatus", b =>
                 {
-                    b.HasOne("SpacePark.DB.Models.DBCustomer", "Customer")
+                    b.HasOne("SpacePark.DB.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SpacePark.DB.Models.DBSpot", "Spot")
+                    b.HasOne("SpacePark.DB.Models.Spot", "Spot")
                         .WithMany()
                         .HasForeignKey("SpotID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -124,9 +182,9 @@ namespace SpacePark.Migrations
                     b.Navigation("Spot");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
-                    b.HasOne("SpacePark.DB.Models.DBCustomer", "Customer")
+                    b.HasOne("SpacePark.DB.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)

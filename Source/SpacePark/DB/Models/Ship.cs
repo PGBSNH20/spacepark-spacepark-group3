@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpacePark.DB.Models
 {
-    public class DBShip
+    public class Ship
     {
         [Key]
         public int ID { get; set; }
@@ -14,7 +14,7 @@ namespace SpacePark.DB.Models
         public int CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]
-        public virtual DBCustomer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }
 

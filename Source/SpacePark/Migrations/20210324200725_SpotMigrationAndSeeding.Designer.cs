@@ -8,9 +8,9 @@ using SpacePark.DB;
 
 namespace SpacePark.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20210324182545_ParkingAndSpotMigration")]
-    partial class ParkingAndSpotMigration
+    [DbContext(typeof(SpaceParkDbContext))]
+    [Migration("20210324200725_SpotMigrationAndSeeding")]
+    partial class SpotMigrationAndSeeding
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace SpacePark.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBCustomer", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Customer", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace SpacePark.Migrations
                     b.ToTable("Customer");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace SpacePark.Migrations
                     b.ToTable("Ship");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBSpot", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Spot", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -76,11 +76,67 @@ namespace SpacePark.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Spot");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Price = 120m,
+                            Size = 20
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Price = 120m,
+                            Size = 20
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Price = 280m,
+                            Size = 50
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Price = 600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Price = 600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Price = 1600m,
+                            Size = 100
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Price = 8000m,
+                            Size = 1000
+                        });
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
-                    b.HasOne("SpacePark.DB.Models.DBCustomer", "Customer")
+                    b.HasOne("SpacePark.DB.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)

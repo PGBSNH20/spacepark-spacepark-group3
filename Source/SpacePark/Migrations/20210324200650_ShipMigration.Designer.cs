@@ -8,9 +8,9 @@ using SpacePark.DB;
 
 namespace SpacePark.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20210324172640_ShipMigraiton")]
-    partial class ShipMigraiton
+    [DbContext(typeof(SpaceParkDbContext))]
+    [Migration("20210324200650_ShipMigration")]
+    partial class ShipMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace SpacePark.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBCustomer", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Customer", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace SpacePark.Migrations
                     b.ToTable("Customer");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -60,9 +60,9 @@ namespace SpacePark.Migrations
                     b.ToTable("Ship");
                 });
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBShip", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Ship", b =>
                 {
-                    b.HasOne("SpacePark.DB.Models.DBCustomer", "Customer")
+                    b.HasOne("SpacePark.DB.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.Cascade)

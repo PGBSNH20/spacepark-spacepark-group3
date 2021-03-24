@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpacePark.DB.Models
 {
-    public class DBSpot
+    public class Spot
     {
         [Key]
         public int ID { get; set; }

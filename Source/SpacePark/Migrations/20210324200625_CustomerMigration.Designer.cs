@@ -8,9 +8,9 @@ using SpacePark.DB;
 
 namespace SpacePark.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20210324170002_CustomerInit")]
-    partial class CustomerInit
+    [DbContext(typeof(SpaceParkDbContext))]
+    [Migration("20210324200625_CustomerMigration")]
+    partial class CustomerMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace SpacePark.Migrations
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("SpacePark.DB.Models.DBCustomer", b =>
+            modelBuilder.Entity("SpacePark.DB.Models.Customer", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -32,7 +32,7 @@ namespace SpacePark.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users");
+                    b.ToTable("Customer");
                 });
 #pragma warning restore 612, 618
         }
