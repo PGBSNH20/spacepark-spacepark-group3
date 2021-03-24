@@ -6,9 +6,11 @@ namespace Program
 {
     class ConsoleGUI
     {
-        private void WelcomeMessage(string applicationName)
+        private String applicationName;
+
+        private void WelcomeMessage()
         {
-            AnsiConsole.MarkupLine($"[red on black]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
+            AnsiConsole.MarkupLine($"[yellow]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
         }
 
         private void StartParking(bool randomSlot)
@@ -49,19 +51,37 @@ namespace Program
         private void ShowAvailableParking()
         {
             var tree = new Tree("Available parking slots");
-            var slots = tree.AddNode("[blue]Parking[/]");
-            slots.AddNode(new Table().RoundedBorder()
-            .AddColumn("First floor")
-            .AddColumn("Second floor")
-            .AddRow("Taken", "Available")
-            .AddRow("Available", "Taken")
-            .AddRow("Available", "Taken"));
+            var parking = tree.AddNode("[purple]Parking[/]");
+
+            var firstFloor = parking.AddNode("[yellow]First floor[/]");
+            firstFloor.AddNodes(new string[] { "Taken", "Available", "Taken" });
+            var secondFloor = parking.AddNode("[blue]Second floor[/]");
+            secondFloor.AddNodes(new string[] { "Taken", "Available", "Taken" });
 
             AnsiConsole.Render(tree);
+            var goBack = AnsiConsole.Confirm("Go back");
+            if (goBack)
+            {
+                AnsiConsole.Console.Clear(true);
+                DisplayMenu();
+            }
+            else
+            {
+                ExitProgram();
+            }
         }
 
         private void DisplayMenu()
         {
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine("Parking slots");
+            AnsiConsole.Render(new BreakdownChart()
+            .FullSize()
+            .Width(60)
+            .AddItem("Available", 2, Color.Green)
+            .AddItem("Taken", 4, Color.Red));
+
+            AnsiConsole.MarkupLine("");
             List<string> availableChoices = new()
             {
                 "Start parking",
@@ -71,7 +91,7 @@ namespace Program
 
             var selectedChoice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("Welcome! [purple]What would you like to do[/]?")
+                .Title("[purple]Welcome![/] What would you like to do?")
                 .PageSize(3)
                 .AddChoices(availableChoices));
 
@@ -85,14 +105,22 @@ namespace Program
             }
             else
             {
-                Environment.Exit(0);
+                ExitProgram();
             }
         }
 
         public void LoadGUI(string applicationName)
         {
-            WelcomeMessage(applicationName);
+            this.applicationName = applicationName;
+            WelcomeMessage();
             DisplayMenu();
+        }
+
+        private void ExitProgram()
+        {
+            AnsiConsole.Console.Clear(true);
+            AnsiConsole.MarkupLine($"Thank you for using {applicationName}!");
+            Environment.Exit(0);
         }
     }
 }
