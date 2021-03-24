@@ -15,6 +15,7 @@ namespace SpacePark.DB
         public DbSet<DBCustomer> Customer { get; set; }
         public DbSet<DBShip> Ship { get; set; }
         public DbSet<DBSpot> Spot { get; set; }
+        public DbSet<DBParkingStatus> ParkingStatus { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

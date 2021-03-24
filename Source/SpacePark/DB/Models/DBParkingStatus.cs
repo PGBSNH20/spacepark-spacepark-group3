@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace SpacePark.DB.Models
 {
-    public class ParkingStatus
+    public class DBParkingStatus
     {
         [Key]
         public int ID { get; set; }
