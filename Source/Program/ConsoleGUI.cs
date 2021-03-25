@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using SpacePark.DB.Interfaces;
+using SpacePark.DB.Models;
+using SpacePark.DB.Queries;
 using Spectre.Console;
 
 namespace Program
 {
-    class ConsoleGUI
+    public class ConsoleGUI
     {
         private String applicationName;
+        private readonly int totalSpots = 27;
+        private readonly int spotsPerFloor = 10;
+        private List<Spot> spots = new();
 
         private void WelcomeMessage()
         {
@@ -15,7 +21,14 @@ namespace Program
 
         private void StartParking(bool randomSlot)
         {
+            if (randomSlot)
+            {
 
+            }
+            else
+            {
+
+            }
         }
 
         private void InitiateParking()
@@ -48,15 +61,41 @@ namespace Program
             }
         }
 
+        private void GetSpots()
+        {
+            ISpotQuery spotQuery = new SpotQuery();
+            spotQuery.GetSpots().ForEach(spot => spots.Add(spot));
+            spots = spotQuery.GetSpots();
+        }
+
+        private void AddSpotsToTree(int floor, TreeNode parking)
+        {
+            parking.AddNode($"[yellow]Floor {floor + 1}:[/]");
+
+            int spotsAdded = 0;
+            for (int spot = 0; spot < spotsPerFloor; spot++)
+            {
+                parking.Nodes[floor].AddNode($"Spot {spot + 1}: Available");
+                spotsAdded++;
+
+                if (spotsAdded >= totalSpots)
+                {
+                    return;
+                }
+            }
+        }
+
         private void ShowAvailableParking()
         {
+            GetSpots();
             var tree = new Tree("Available parking slots");
             var parking = tree.AddNode("[purple]Parking[/]");
 
-            var firstFloor = parking.AddNode("[yellow]First floor[/]");
-            firstFloor.AddNodes(new string[] { "Taken", "Available", "Taken" });
-            var secondFloor = parking.AddNode("[blue]Second floor[/]");
-            secondFloor.AddNodes(new string[] { "Taken", "Available", "Taken" });
+            for (int floor = 0; floor < (totalSpots / spotsPerFloor); floor++)
+            {
+                AddSpotsToTree(floor, parking);
+            }
+
 
             AnsiConsole.Render(tree);
             var goBack = AnsiConsole.Confirm("Go back");

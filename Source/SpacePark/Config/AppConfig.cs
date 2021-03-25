@@ -1,20 +1,23 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
-using SpacePark.Models;
 
-namespace SpacePark.Configuration
+namespace SpacePark.Config
 {
     public class AppConfig
     {
 
-        public Config GetConfig()
+        public string ConnectionString { get; set; }
+        public string APIUrl { get; set; }
+        public string Name { get; set; }
+
+        public AppConfig GetConfig() 
         {
             IConfigurationRoot config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("config.json", false, true)
                 .Build();
 
-            Config programConfig = new Config();
+            AppConfig programConfig = new AppConfig();
 
             config.GetSection("Settings").Bind(programConfig);
 
