@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SpacePark.DB.Models;
-
+using SpacePark.Config;
 
 namespace SpacePark.DB
 {
     public class SpaceParkDbContext : DbContext
     {
-        private string _connString;
+        private readonly string _connString;
         public SpaceParkDbContext() : base()
         {
-            this._connString = "host=localhost;port=5432;database=SpacePark;user id=admin;password=secret";
+            this._connString = AppConfig.GetConfig().ConnectionString;
         }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Ship> Ship { get; set; }

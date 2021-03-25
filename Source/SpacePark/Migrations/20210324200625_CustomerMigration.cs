@@ -15,10 +15,7 @@ namespace SpacePark.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.ID);
-                });
+                constraints: table => table.PrimaryKey("PK_Customer", x => x.ID));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

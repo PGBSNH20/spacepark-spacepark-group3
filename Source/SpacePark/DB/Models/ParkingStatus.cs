@@ -8,14 +8,13 @@ namespace SpacePark.DB.Models
         [Key]
         public int ID { get; set; }
         [Required]
-        public DateTime arrivalTime { get; set; }
+        public DateTime ArrivalTime { get; set; }
         [Required]
-        public DateTime departureAt { get; set; }
+        public DateTime DepartureAt { get; set; }
         public int CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]
         public virtual Customer Customer { get; set; }
-        
         public int SpotID { get; set; }
 
         [ForeignKey("SpotID")]

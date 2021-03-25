@@ -2,34 +2,34 @@
 using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
+using SpacePark.Config;
 
 namespace SpacePark.Networking
 {
     public class StarWarsAPI
     {
-        readonly string apiUrl = "https://swapi.dev/api";
-        RestClient client;
+        private readonly RestClient _client;
 
         public StarWarsAPI()
         {
-            client = new RestClient(apiUrl);
+            _client = new RestClient(AppConfig.GetConfig().APIUrl);
         }
 
         public bool UserFromStarWars(string name)
         {
-            RestRequest request = new RestRequest("/people/", Method.GET);
-            request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
+            RestRequest request = new("/people/", Method.GET);
+            request.OnBeforeDeserialization = resp => resp.ContentType = "application/json";
 
-            var result = client.Execute(request);
+            var result = _client.Execute(request);
             var jsonObject = JObject.Parse(result.Content);
 
-            List<string> names = new List<string>();
+            List<string> names = new();
             foreach(var entry in jsonObject["results"])
             {
                 names.Add(entry["name"].ToString());
             }
 
-            return names.Any(n => n.ToLower() == name.ToLower());
+            return names.Any(n => string.Equals(n, name, System.StringComparison.OrdinalIgnoreCase));
         }
     }
 }

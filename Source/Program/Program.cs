@@ -1,22 +1,14 @@
-using SpacePark.Config;
+﻿using SpacePark.Config;
 using SpacePark.DB.Interfaces;
 using SpacePark.DB.Queries;
 using System;
 
 namespace Program
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            
-            AppConfig config = new AppConfig().GetConfig();
-
-            ISpotQuery spotQuery = new SpotQuery();
-
-            spotQuery.GetSpots().ForEach(e => {
-                Console.WriteLine($"Object: {e.ID}, {e.Price}, {e.Size}");
-            });
             // using (var ctx = new AppDbContext())
             // {
             //     var user = new DBUser() {

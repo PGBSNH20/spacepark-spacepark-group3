@@ -5,7 +5,6 @@ namespace SpacePark.DB.Interfaces
 {
     public interface ISpotQuery
     {
-         
          List<Spot> GetSpots();
     }
 }

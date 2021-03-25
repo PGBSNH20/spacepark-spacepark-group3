@@ -9,10 +9,8 @@ namespace SpacePark.DB.Queries
     {
         public List<Spot> GetSpots()
         {
-            using (var ctx = new SpaceParkDbContext())
-            {
-                return ctx.Spot.ToList();
-            }
+            using var ctx = new SpaceParkDbContext();
+            return ctx.Spot.ToList();
         }
     }
 }
