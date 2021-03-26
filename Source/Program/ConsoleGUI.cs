@@ -12,9 +12,14 @@ namespace Program
     public class ConsoleGUI
     {
         private String applicationName;
-        private readonly int totalSpots = 27;
-        private readonly int spotsPerFloor = 10;
+        private readonly int spotsPerFloor = 3;
         private List<Spot> spots = new();
+
+        public ConsoleGUI()
+        {
+            // Fetches the layout/spots of the parking
+            GetSpots();
+        }
 
         private void WelcomeMessage()
         {
@@ -33,44 +38,63 @@ namespace Program
             }
         }
 
+        private bool IsParkingAvailable()
+        {
+            return true;
+        }
+
+        private bool CanPark()
+        {
+            // Verifies that there are available spots
+            if (IsParkingAvailable())
+            {
+                // Check if the name comes from the Star Wars universe (eligble to park)
+                var inputName = AnsiConsole.Ask<string>("What is your name?");
+
+                StarWarsAPI starwars = new();
+                if (!starwars.UserFromStarWars(inputName))
+                {
+                    AnsiConsole.MarkupLine("Sorry, you cannot park here!");
+                    Thread.Sleep(2000);
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         private void InitiateParking()
         {
-            // Check if the name comes from the Star Wars universe (eligble to park)
-            var inputName = AnsiConsole.Ask<string>("What is your name?");
+            if (CanPark())
+            {
+                // TODO Check if there are any available slots
+                List<string> availableChoices = new()
+                {
+                    "Park at any available spot",
+                    "Choose a specific spot",
+                    "Go back"
+                };
 
-            StarWarsAPI starwars = new();
-            if (!starwars.UserFromStarWars(inputName))
-            {
-                AnsiConsole.MarkupLine("Sorry, you cannot park here!");
-                Thread.Sleep(2000);
-                return;
-            }
+                var selectedChoice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[purple]How would you like to park[/]?")
+                    .PageSize(3)
+                    .AddChoices(availableChoices));
 
-            // TODO Check if there are any available slots
-            List<string> availableChoices = new()
-            {
-                "Park at any available spot",
-                "Choose a specific spot",
-                "Go back"
-            };
-
-            var selectedChoice = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("[purple]How would you like to park[/]?")
-                .PageSize(3)
-                .AddChoices(availableChoices));
-
-            if (selectedChoice == availableChoices[0])
-            {
-                StartParking(false);
-            }
-            else if (selectedChoice == availableChoices[1])
-            {
-                StartParking(true);
-            }
-            else
-            {
-                DisplayMenu();
+                if (selectedChoice == availableChoices[0])
+                {
+                    StartParking(false);
+                }
+                else if (selectedChoice == availableChoices[1])
+                {
+                    StartParking(true);
+                }
+                else
+                {
+                    DisplayMenu();
+                }
             }
         }
 
@@ -91,7 +115,7 @@ namespace Program
                 parking.Nodes[floor].AddNode($"Spot {spot + 1}: Available");
                 spotsAdded++;
 
-                if (spotsAdded >= totalSpots)
+                if (spotsAdded >= spots.Count)
                 {
                     return;
                 }
@@ -104,7 +128,7 @@ namespace Program
             var tree = new Tree("Available parking slots");
             var parking = tree.AddNode("[purple]Parking[/]");
 
-            for (int floor = 0; floor < (totalSpots / spotsPerFloor); floor++)
+            for (int floor = 0; floor < (spots.Count / spotsPerFloor); floor++)
             {
                 AddSpotsToTree(floor, parking);
             }
