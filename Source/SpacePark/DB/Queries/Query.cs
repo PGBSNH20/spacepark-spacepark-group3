@@ -7,6 +7,10 @@ namespace SpacePark.DB.Queries
 {
     public class Query : IQuery
     {
+        public Query(SpaceParkDbContext @object)
+        {
+        }
+
         public void CreateCustomer(Customer customer)
         {
             using var ctx = new SpaceParkDbContext();

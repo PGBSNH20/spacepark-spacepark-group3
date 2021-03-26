@@ -1,0 +1,10 @@
+{
+  "ConnectionStrings": {
+    //"Default": "Host=localhost\\SQLEXPRESS;port=1433;Username=admin;Password=secret;Database=SpacePark"
+    "Default": "host=localhost;port=5432;database=SpacePark;user id=admin;password=secret"
+  },
+  "Settings": {
+    "APIUrl": "https://swapi.dev/api",
+    "Name": "SpacePark Awesome"
+  }
+}
