@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using SpacePark.DB.Interfaces;
 using SpacePark.DB.Models;
 using SpacePark.DB.Queries;
+using SpacePark.Networking;
 using Spectre.Console;
 
 namespace Program
@@ -33,6 +35,17 @@ namespace Program
 
         private void InitiateParking()
         {
+            // Check if the name comes from the Star Wars universe (eligble to park)
+            var inputName = AnsiConsole.Ask<string>("What is your name?");
+
+            StarWarsAPI starwars = new();
+            if (!starwars.UserFromStarWars(inputName))
+            {
+                AnsiConsole.MarkupLine("Sorry, you cannot park here!");
+                Thread.Sleep(2000);
+                return;
+            }
+
             // TODO Check if there are any available slots
             List<string> availableChoices = new()
             {
