@@ -16,10 +16,7 @@ namespace SpacePark.Migrations
                     Size = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Spot", x => x.ID);
-                });
+                constraints: table => table.PrimaryKey("PK_Spot", x => x.ID));
 
             migrationBuilder.InsertData(
                 table: "Spot",

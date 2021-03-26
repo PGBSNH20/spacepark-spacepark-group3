@@ -5,19 +5,18 @@ namespace SpacePark.Config
 {
     public class AppConfig
     {
-
         public string ConnectionString { get; set; }
         public string APIUrl { get; set; }
         public string Name { get; set; }
 
-        public AppConfig GetConfig() 
+        public static AppConfig GetConfig()
         {
             IConfigurationRoot config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("config.json", false, true)
                 .Build();
 
-            AppConfig programConfig = new AppConfig();
+            AppConfig programConfig = new();
 
             config.GetSection("Settings").Bind(programConfig);
 
