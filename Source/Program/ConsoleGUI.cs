@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using SpacePark.DB.Interfaces;
 using SpacePark.DB.Models;
 using SpacePark.DB.Queries;
 using SpacePark.Networking;
@@ -14,11 +14,13 @@ namespace Program
         private String applicationName;
         private readonly int spotsPerFloor = 3;
         private List<Spot> spots = new();
+        private List<int> availableSpotIds = new();
+        private List<ParkingStatus> parkingStatuses = new();
 
         public ConsoleGUI()
         {
-            // Fetches the layout/spots of the parking
-            GetSpots();
+            // Fetches from the database
+            GetData();
         }
 
         private void WelcomeMessage()
@@ -26,33 +28,89 @@ namespace Program
             AnsiConsole.MarkupLine($"[yellow]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
         }
 
-        private void StartParking(bool randomSlot)
+        private void StartParking(bool randomSlot, Customer customer)
         {
+            Query query = new();
+            ParkingStatus parkingStatus = new();
+            parkingStatus.Customer = customer;
+
+            FetchAvailableParking();
+
             if (randomSlot)
             {
-
+                Random rand = new();
+                parkingStatus.SpotID = availableSpotIds[rand.Next(0, availableSpotIds.Count - 1)];
             }
             else
             {
+                var tree = new Tree("Available parking slots");
+                var parking = tree.AddNode("[purple]Available parking slots[/]");
 
+                for (int floor = 0; floor < Math.Min(availableSpotIds.Count, spotsPerFloor); floor++)
+                {
+                    AddSpotsToTree(floor, parking);
+                }
+
+                AnsiConsole.Render(tree);
+                AnsiConsole.MarkupLine("");
+
+                List<String> availableSpots = new();
+                foreach (int spotID in availableSpotIds)
+                {
+                    availableSpots.Add($"Spot: {spotID}");
+                }
+
+                var selectedChoice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[purple]Welcome![/] What would you like to do?")
+                    .PageSize(availableSpots.Count)
+                    .AddChoices(availableSpots));
+
+                // Fetch the spotID from the selected choice
+                parkingStatus.SpotID = int.Parse(selectedChoice[selectedChoice.IndexOf(" ")..]);
             }
+
+            parkingStatus.ArrivalTime = DateTime.Now;
+            query.CreateParkingStatus(parkingStatus);
+
+            AnsiConsole.MarkupLine($"You have started parking at spot: {parkingStatus.SpotID}");
+            Thread.Sleep(3000);
         }
 
-        private bool IsParkingAvailable()
+        private void FetchAvailableParking()
         {
-            return true;
-        }
+            Query query = new();
+            parkingStatuses = query.GetAllParkingStatus();
+            List<int> availableSpotIds = new();
 
-        private bool CanPark()
-        {
-            // Verifies that there are available spots
-            if (IsParkingAvailable())
+            // Add all spots to available
+            spots.ForEach(spot => availableSpotIds.Add(spot.ID));
+
+            // Remove the occupied slots from available
+            foreach (ParkingStatus status in parkingStatuses)
             {
-                // Check if the name comes from the Star Wars universe (eligble to park)
-                var inputName = AnsiConsole.Ask<string>("What is your name?");
+                foreach (Spot spot in spots)
+                {
+                    if (spot.ID == status.SpotID)
+                    {
+                        // Remove slot if already occupied
+                        availableSpotIds.Remove(availableSpotIds.First(s => s == spot.ID));
+                    }
+                }
+            }
 
+            this.availableSpotIds = availableSpotIds;
+        }
+
+        private bool CanPark(string name)
+        {
+            FetchAvailableParking();
+
+            // Verifies that there are available spots
+            if (availableSpotIds.Count > 0)
+            {
                 StarWarsAPI starwars = new();
-                if (!starwars.UserFromStarWars(inputName))
+                if (!starwars.UserFromStarWars(name))
                 {
                     AnsiConsole.MarkupLine("Sorry, you cannot park here!");
                     Thread.Sleep(2000);
@@ -67,7 +125,10 @@ namespace Program
 
         private void InitiateParking()
         {
-            if (CanPark())
+            // Check if the name comes from the Star Wars universe (eligble to park)
+            var inputName = AnsiConsole.Ask<string>("What is your name?");
+
+            if (CanPark(inputName))
             {
                 // TODO Check if there are any available slots
                 List<string> availableChoices = new()
@@ -83,13 +144,17 @@ namespace Program
                     .PageSize(3)
                     .AddChoices(availableChoices));
 
+                Customer customer = new();
+                customer.Name = inputName;
+                customer.ID = 0;
+
                 if (selectedChoice == availableChoices[0])
                 {
-                    StartParking(false);
+                    StartParking(true, customer);
                 }
                 else if (selectedChoice == availableChoices[1])
                 {
-                    StartParking(true);
+                    StartParking(false, customer);
                 }
                 else
                 {
@@ -98,11 +163,10 @@ namespace Program
             }
         }
 
-        private void GetSpots()
+        private void GetData()
         {
-            ISpotQuery spotQuery = new SpotQuery();
-            spotQuery.GetSpots().ForEach(spot => spots.Add(spot));
-            spots = spotQuery.GetSpots();
+            Query query = new();
+            spots = query.GetSpots();
         }
 
         private void AddSpotsToTree(int floor, TreeNode parking)
@@ -124,7 +188,7 @@ namespace Program
 
         private void ShowAvailableParking()
         {
-            GetSpots();
+            GetData();
             var tree = new Tree("Available parking slots");
             var parking = tree.AddNode("[purple]Parking[/]");
 
@@ -132,7 +196,6 @@ namespace Program
             {
                 AddSpotsToTree(floor, parking);
             }
-
 
             AnsiConsole.Render(tree);
             var goBack = AnsiConsole.Confirm("Go back");

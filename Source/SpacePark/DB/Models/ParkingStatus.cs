@@ -9,8 +9,6 @@ namespace SpacePark.DB.Models
         public int ID { get; set; }
         [Required]
         public DateTime ArrivalTime { get; set; }
-        [Required]
-        public DateTime DepartureAt { get; set; }
         public int CustomerID { get; set; }
 
         [ForeignKey("CustomerID")]

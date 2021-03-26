@@ -1,11 +1,4 @@
-<<<<<<< HEAD
 using SpacePark.Config;
-=======
-﻿using SpacePark.DB.Models;
->>>>>>> main
-using SpacePark.DB.Interfaces;
-using SpacePark.DB.Queries;
-using System;
 
 namespace Program
 {
