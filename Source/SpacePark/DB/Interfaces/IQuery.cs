@@ -5,15 +5,16 @@ namespace SpacePark.DB.Interfaces
 {
     public interface IQuery
     {
-        List<Spot> GetSpots();
+        IEnumerable<Spot> GetSpots();
         void CreateCustomer(Customer customer);
         Customer GetCustomer(string name);
         void CreateParkingStatus(ParkingStatus parkingStatus);
         IEnumerable<ParkingStatus> GetAllParkingStatus();
         ParkingStatus GetParkingStatusByCustomer(Customer customer);
         ParkingStatus GetParkingStatusByName(string name);
-        void DeleteParkingStatusByName(ParkingStatus parkingStatus);
+        ParkingStatus GetParkingStatusBySpotID(int id);
+        void DeleteParkingStatus(ParkingStatus parkingStatus);
         void CreateShip(Ship ship);
-        Ship GetShip(string plate);
+        Ship GetShipByPlate(string plate);
     }
 }

@@ -58,21 +58,27 @@ namespace SpacePark.DB.Queries
                         .SingleOrDefault(p => p.Customer.Name == name);
         }
 
-        public void DeleteParkingStatusByName(ParkingStatus parkingStatus)
+        public ParkingStatus GetParkingStatusBySpotID(int id)
+        {
+            using var ctx = new SpaceParkDbContext();
+            return ctx.ParkingStatus
+                        .SingleOrDefault(p => p.SpotID == id);
+        }
+        public void DeleteParkingStatus(ParkingStatus parkingStatus)
         {
             using var ctx = new SpaceParkDbContext();
             ctx.ParkingStatus.Remove(parkingStatus);
             ctx.SaveChanges();
         }
 
-        public Ship GetShip(string plate)
+        public Ship GetShipByPlate(string plate)
         {
             using var ctx = new SpaceParkDbContext();
             return ctx.Ship
                 .SingleOrDefault(x => x.Plate.ToLower() == plate.ToLower());
         }
 
-        public List<Spot> GetSpots()
+        public IEnumerable<Spot> GetSpots()
         {
             using var ctx = new SpaceParkDbContext();
             return ctx.Spot.ToList();
