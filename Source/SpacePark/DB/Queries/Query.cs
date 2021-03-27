@@ -7,14 +7,16 @@ namespace SpacePark.DB.Queries
 {
     public class Query : IQuery
     {
-        public Query(SpaceParkDbContext @object)
+        private SpaceParkDbContext _context;
+        public Query(SpaceParkDbContext context)
         {
+            _context = context;
         }
 
         public void CreateCustomer(Customer customer)
         {
             using var ctx = new SpaceParkDbContext();
-            ctx.Customer.Add(customer);
+            ctx.Customers.Add(customer);
             ctx.SaveChanges();
         }
 
@@ -30,25 +32,25 @@ namespace SpacePark.DB.Queries
 
             using var ctx = new SpaceParkDbContext();
 
-            return ctx.Customer
+            return ctx.Customers
                 .SingleOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
         public void CreateParkingStatus(ParkingStatus parkingStatus) {
             using var ctx = new SpaceParkDbContext();
 
-            ctx.ParkingStatus.Add(parkingStatus);
+            ctx.ParkingStatuses.Add(parkingStatus);
             ctx.SaveChanges();
         }
 
         public List<ParkingStatus> GetAllParkingStatus() {
             using var ctx = new SpaceParkDbContext();
-            return ctx.ParkingStatus.ToList();
+            return ctx.ParkingStatuses.ToList();
         }
 
         public ParkingStatus GetParkingStatusByCustomer(Customer customer) {
             using var ctx = new SpaceParkDbContext();
-            return ctx.ParkingStatus
+            return ctx.ParkingStatuses
                         .SingleOrDefault(p => p.CustomerID == customer.ID);
         }
 

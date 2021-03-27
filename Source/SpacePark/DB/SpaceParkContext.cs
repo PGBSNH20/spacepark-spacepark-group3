@@ -11,10 +11,10 @@ namespace SpacePark.DB
         {
             this._connString = AppConfig.GetConfig().ConnectionString;
         }
-        public DbSet<Customer> Customer { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
         public DbSet<Ship> Ship { get; set; }
         public DbSet<Spot> Spot { get; set; }
-        public DbSet<ParkingStatus> ParkingStatus { get; set; }
+        public virtual DbSet<ParkingStatus> ParkingStatuses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
