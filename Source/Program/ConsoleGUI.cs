@@ -11,7 +11,7 @@ namespace Program
 {
     public class ConsoleGUI
     {
-        private String applicationName;
+        private string applicationName;
         private readonly int spotsPerFloor = 3;
         private List<Spot> spots = new();
         private List<int> availableSpotIds = new();
@@ -54,7 +54,7 @@ namespace Program
                 AnsiConsole.Render(tree);
                 AnsiConsole.MarkupLine("");
 
-                List<String> availableSpots = new();
+                List<string> availableSpots = new();
                 foreach (int spotID in availableSpotIds)
                 {
                     availableSpots.Add($"Spot: {spotID}");
@@ -80,7 +80,7 @@ namespace Program
         private void FetchAvailableParking()
         {
             Query query = new();
-            parkingStatuses = query.GetAllParkingStatus();
+            parkingStatuses = query.GetAllParkingStatus().ToList();
             List<int> availableSpotIds = new();
 
             // Add all spots to available
@@ -167,21 +167,26 @@ namespace Program
         {
             Query query = new();
             spots = query.GetSpots();
+            FetchAvailableParking();
         }
 
         private void AddSpotsToTree(int floor, TreeNode parking)
         {
-            parking.AddNode($"[yellow]Floor {floor + 1}:[/]");
+            parking.AddNode($"[yellow]Floor {floor}:[/]");
 
-            int spotsAdded = 0;
-            for (int spot = 0; spot < spotsPerFloor; spot++)
+            int nodeIndex = 0;
+            parking.Nodes.ForEach(node => nodeIndex += node.Nodes.Count);
+            for (int spotID = nodeIndex; spotID < Math.Min(nodeIndex + 3, spots.Count); spotID++)
             {
-                parking.Nodes[floor].AddNode($"Spot {spot + 1}: Available");
-                spotsAdded++;
-
-                if (spotsAdded >= spots.Count)
+                if (availableSpotIds.Contains(spotID + 1))
                 {
-                    return;
+                    parking.Nodes[floor].AddNode($"Spot {spotID + 1}: Available");
+                }
+                else
+                {
+                    Query query = new();
+                    ParkingStatus taken = parkingStatuses.SingleOrDefault(x => x.Spot.ID == spotID + 1);
+                    parking.Nodes[floor].AddNode($"Spot {taken.SpotID}: {taken.Customer.Name}");
                 }
             }
         }
@@ -205,6 +210,24 @@ namespace Program
             }
         }
 
+        private void EndParking()
+        {
+            Query query = new();
+            var inputName = AnsiConsole.Ask<string>("What is your name?");
+
+            var result = query.GetParkingStatusByName(inputName);
+            if (result == null)
+            {
+                AnsiConsole.MarkupLine($"There is no active parking registered on {inputName}!");
+                Thread.Sleep(2000);
+            }
+
+            query.DeleteParkingStatusByName(result);
+            AnsiConsole.MarkupLine("Parking ended.");
+            // print invoice
+            Thread.Sleep(3000);
+        }
+
         private void DisplayMenu()
         {
             AnsiConsole.MarkupLine("");
@@ -220,13 +243,14 @@ namespace Program
             {
                 "Start parking",
                 "Check available parking spots",
+                "End parking",
                 "Quit"
             };
 
             var selectedChoice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[purple]Welcome![/] What would you like to do?")
-                .PageSize(3)
+                .PageSize(4)
                 .AddChoices(availableChoices));
 
             if (selectedChoice == availableChoices[0])
@@ -236,6 +260,10 @@ namespace Program
             else if (selectedChoice == availableChoices[1])
             {
                 ShowAvailableParking();
+            }
+            else if (selectedChoice == availableChoices[2])
+            {
+                EndParking();
             }
             else
             {
