@@ -48,14 +48,15 @@ namespace SpacePark.Networking
                 Ship ship = new();
                 ship.Name = entry["name"].ToString();
                 string length = entry["length"].ToString();
-                length = length.Replace(",", "").Replace(".", ","); // Decimal/dot structure in API is inconsistent
-
-                ship.Length = (int)double.Parse(length);
+                length = length.Replace(",", ""); // Decimal/dot structure in API is inconsistent
+                int index = length.IndexOf(".");
+                if (index > 0)
+                    length = length.Substring(0, index);
+                ship.Length = int.Parse(length);
                 ships.Add(ship);
             }
 
             return ships;
         }
-
     }
 }
