@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SpacePark.DB;
@@ -9,9 +10,10 @@ using SpacePark.DB;
 namespace SpacePark.Migrations
 {
     [DbContext(typeof(SpaceParkDbContext))]
-    partial class SpaceParkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210326195540_FixedMigrations")]
+    partial class FixedMigrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

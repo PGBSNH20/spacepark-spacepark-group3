@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
@@ -22,7 +21,6 @@ namespace SpacePark.Config
             config.GetSection("Settings").Bind(programConfig);
 
             programConfig.ConnectionString = config.GetConnectionString("Default");
-
             return programConfig;
         }
     }

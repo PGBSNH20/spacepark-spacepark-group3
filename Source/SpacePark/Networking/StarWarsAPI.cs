@@ -3,6 +3,7 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Linq;
 using SpacePark.Config;
+using SpacePark.DB.Models;
 
 namespace SpacePark.Networking
 {
@@ -15,21 +16,46 @@ namespace SpacePark.Networking
             _client = new RestClient(AppConfig.GetConfig().APIUrl);
         }
 
-        public bool UserFromStarWars(string name)
+        public JObject GetJsonData(string endpoint)
         {
-            RestRequest request = new("/people/", Method.GET);
+            RestRequest request = new(endpoint, Method.GET);
             request.OnBeforeDeserialization = resp => resp.ContentType = "application/json";
 
             var result = _client.Execute(request);
-            var jsonObject = JObject.Parse(result.Content);
+            return JObject.Parse(result.Content);
+        }
+
+        public bool UserFromStarWars(string name)
+        {
+            var jsonObject = GetJsonData("/people/");
 
             List<string> names = new();
-            foreach(var entry in jsonObject["results"])
+            foreach (var entry in jsonObject["results"])
             {
                 names.Add(entry["name"].ToString());
             }
 
             return names.Any(n => string.Equals(n, name, System.StringComparison.OrdinalIgnoreCase));
         }
+
+        public List<Ship> GetStarWarsShips()
+        {
+            List<Ship> ships = new();
+            var jsonObject = GetJsonData("/starships/");
+
+            foreach (var entry in jsonObject["results"])
+            {
+                Ship ship = new();
+                ship.Name = entry["name"].ToString();
+                string length = entry["length"].ToString();
+                length = length.Replace(",", "").Replace(".", ","); // Decimal/dot structure in API is inconsistent
+
+                ship.Length = (int)double.Parse(length);
+                ships.Add(ship);
+            }
+
+            return ships;
+        }
+
     }
 }

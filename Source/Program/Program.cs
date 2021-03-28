@@ -1,7 +1,4 @@
-﻿using SpacePark.DB.Models;
-using SpacePark.DB.Interfaces;
-using SpacePark.DB.Queries;
-using System;
+﻿using SpacePark.Config;
 
 namespace Program
 {
@@ -9,7 +6,8 @@ namespace Program
     {
         public static void Main(string[] args)
         {
-
+            GUI.GUI gui = new(AppConfig.GetConfig().Name);
+            gui.LoadGUI();
         }
     }
 }
