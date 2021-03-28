@@ -24,12 +24,17 @@ namespace SpacePark.DB.Models
             ctx.SaveChanges();
         }
 
-        public Customer GetByName(string name) {
+        public static Customer GetByName(string name) {
             using var ctx = new SpaceParkDbContext();
             return ctx.Customer
                 .SingleOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
+        public static Customer GetByID(int id) {
+            using var ctx = new SpaceParkDbContext();
+            return ctx.Customer
+                .SingleOrDefault(x => x.ID == id);
+        }
         public void Delete() {
             using var ctx = new SpaceParkDbContext();
             ctx.Customer.Remove(this);

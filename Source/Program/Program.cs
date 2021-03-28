@@ -1,4 +1,6 @@
-using SpacePark.Config;
+﻿using SpacePark.Config;
+using SpacePark.Logic;
+using Program.GUI;
 
 namespace Program
 {
@@ -6,8 +8,8 @@ namespace Program
     {
         public static void Main(string[] args)
         {
-            ConsoleGUI gui = new();
-            gui.LoadGUI(AppConfig.GetConfig().Name);
+            GUI.GUI gui = new(AppConfig.GetConfig().Name);
+            gui.LoadGUI();
         }
     }
 }

@@ -3,30 +3,84 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SpacePark.DB.Models;
+using SpacePark.Logic;
 using SpacePark.Networking;
 using Spectre.Console;
 
-namespace Program
+namespace Program.GUI
 {
-    public class ConsoleGUI
+    public class GUI
     {
-        private string applicationName;
+        private readonly string _applicationName;
         private readonly int spotsPerFloor = 3;
         private List<Spot> spots = new();
         private List<int> availableSpotIds = new();
         private List<ParkingStatus> parkingStatuses = new();
+        private readonly Helpers _helpers;
+        private readonly Logic _logic;
 
-        public ConsoleGUI()
+        public GUI(string applicationName)
         {
+            this._applicationName = applicationName;
+            this._helpers = new Helpers(_applicationName);
+            this._logic = new Logic();
             // Fetches from the database
             GetData();
+
         }
 
-        private void WelcomeMessage()
+        public void LoadGUI()
         {
-            AnsiConsole.MarkupLine($"[yellow]{applicationName} - Developed by Adam, Leo, Aswan & Kadar[/]");
-        }
+            this._helpers.WelcomeMessage();
 
+            while (true)
+            {
+                DisplayMenu();
+                AnsiConsole.Console.Clear(true);
+            }
+        }
+        private void DisplayMenu()
+        {
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine("Parking slots");
+            AnsiConsole.Render(new BreakdownChart()
+            .FullSize()
+            .Width(60)
+            .AddItem("Available", 2, Color.Green)
+            .AddItem("Taken", 4, Color.Red));
+
+            AnsiConsole.MarkupLine("");
+            List<string> availableChoices = new()
+            {
+                "Start parking",
+                "Check available parking spots",
+                "End parking",
+                "Quit"
+            };
+
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]Welcome![/] What would you like to do?")
+                .PageSize(4)
+                .AddChoices(availableChoices));
+
+            if (selectedChoice == availableChoices[0])
+            {
+                InitiateParking();
+            }
+            else if (selectedChoice == availableChoices[1])
+            {
+                ShowAvailableParking();
+            }
+            else if (selectedChoice == availableChoices[2])
+            {
+                EndParking();
+            }
+            else
+            {
+                this._helpers.ExitProgram();
+            }
+        }
         private void StartParking(bool randomSlot, Customer customer)
         {
             ParkingStatus parkingStatus = new();
@@ -199,7 +253,7 @@ namespace Program
             var goBack = AnsiConsole.Confirm("Go back");
             if (!goBack)
             {
-                ExitProgram();
+                this._helpers.ExitProgram();
             }
         }
 
@@ -207,79 +261,20 @@ namespace Program
         {
             var inputName = AnsiConsole.Ask<string>("What is your name?");
 
-            var result = new ParkingStatus().GetByCusomterName(inputName);
-            if (result == null)
+            var ended = this._logic.EndParkingByName(inputName);
+
+            if (!ended)
             {
                 AnsiConsole.MarkupLine($"There is no active parking registered on {inputName}!");
                 Thread.Sleep(2000);
+                return;
             }
 
-            result.Delete();
             AnsiConsole.MarkupLine("Parking ended.");
             // print invoice
             Thread.Sleep(3000);
         }
 
-        private void DisplayMenu()
-        {
-            AnsiConsole.MarkupLine("");
-            AnsiConsole.MarkupLine("Parking slots");
-            AnsiConsole.Render(new BreakdownChart()
-            .FullSize()
-            .Width(60)
-            .AddItem("Available", 2, Color.Green)
-            .AddItem("Taken", 4, Color.Red));
 
-            AnsiConsole.MarkupLine("");
-            List<string> availableChoices = new()
-            {
-                "Start parking",
-                "Check available parking spots",
-                "End parking",
-                "Quit"
-            };
-
-            var selectedChoice = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("[purple]Welcome![/] What would you like to do?")
-                .PageSize(4)
-                .AddChoices(availableChoices));
-
-            if (selectedChoice == availableChoices[0])
-            {
-                InitiateParking();
-            }
-            else if (selectedChoice == availableChoices[1])
-            {
-                ShowAvailableParking();
-            }
-            else if (selectedChoice == availableChoices[2])
-            {
-                EndParking();
-            }
-            else
-            {
-                ExitProgram();
-            }
-        }
-
-        public void LoadGUI(string applicationName)
-        {
-            this.applicationName = applicationName;
-            WelcomeMessage();
-
-            while (true)
-            {
-                DisplayMenu();
-                AnsiConsole.Console.Clear(true);
-            }
-        }
-
-        private void ExitProgram()
-        {
-            AnsiConsole.Console.Clear(true);
-            AnsiConsole.MarkupLine($"Thank you for using {applicationName}!");
-            Environment.Exit(0);
-        }
     }
 }
