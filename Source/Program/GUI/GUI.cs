@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using SpacePark.Config;
 using SpacePark.DB.Models;
 using SpacePark.Logic;
 using SpacePark.Networking;
@@ -78,63 +79,65 @@ namespace Program.GUI
             }
             else
             {
-                this._helpers.ExitProgram();
+                _helpers.ExitProgram();
             }
         }
-        private void StartParking(bool randomSlot, Customer customer, Ship ship)
+        private void StartParking(bool randomSlot, string name, Ship ship)
         {
-            ParkingStatus parkingStatus = new();
-            parkingStatus.Customer = customer;
+            int spotID;
 
             FetchAvailableParking();
 
             if (randomSlot)
-            {
-                Random rand = new();
-                parkingStatus.SpotID = availableSpotIds[rand.Next(0, availableSpotIds.Count - 1)];
-            }
+                spotID = RandomizeParkinSlot();
             else
+                spotID = PromptUserSelectionSlot();
+
+            Spot spot = Spot.GetByID(spotID);
+            if (spot.Size < ship.Length)
             {
-                var tree = new Tree("Available parking slots");
-                var parking = tree.AddNode("[purple]Available parking slots[/]");
-
-                for (int floor = 0; floor < Math.Min(availableSpotIds.Count, spotsPerFloor); floor++)
-                {
-                    AddSpotsToTree(floor, parking);
-                }
-
-                AnsiConsole.Render(tree);
-                AnsiConsole.MarkupLine("");
-
-                List<string> availableSpots = new();
-                foreach (int spotID in availableSpotIds)
-                {
-                    availableSpots.Add($"Spot: {spotID}");
-                }
-
-                var selectedChoice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[purple]Welcome![/] What would you like to do?")
-                    .PageSize(availableSpots.Count)
-                    .AddChoices(availableSpots));
-
-                // Fetch the spotID from the selected choice
-                parkingStatus.SpotID = int.Parse(selectedChoice[selectedChoice.IndexOf(" ")..]);
-            }
-
-            if (spots.SingleOrDefault(s => s.ID == parkingStatus.SpotID).Size <= ship.Length)
-            {
-                AnsiConsole.MarkupLine("Your ship is too big to park in this spot!");
+                AnsiConsole.MarkupLine("Your ship is too big to park at this spot!");
                 Thread.Sleep(2000);
-                StartParking(false, customer, ship);
                 return;
             }
 
-            parkingStatus.ArrivalTime = DateTime.Now;
-            parkingStatus.Create();
+            _logic.CreateParkingStatus(name, spotID);
 
-            AnsiConsole.MarkupLine($"You have started parking at spot: {parkingStatus.SpotID}");
+            AnsiConsole.MarkupLine($"You have started parking at spot: {spotID}");
             Thread.Sleep(3000);
+        }
+
+        private int RandomizeParkinSlot()
+        {
+            Random rand = new();
+            return availableSpotIds[rand.Next(0, availableSpotIds.Count - 1)];
+        }
+
+        private int PromptUserSelectionSlot()
+        {
+            var tree = new Tree("Available parking slots");
+            var parking = tree.AddNode("[purple]Available parking slots[/]");
+
+            for (int floor = 0; floor < Math.Min(availableSpotIds.Count, spotsPerFloor); floor++)
+            {
+                AddSpotsToTree(floor, parking);
+            }
+
+            List<string> availableSpots = new();
+            foreach (int spotID in availableSpotIds)
+            {
+                var spot = Spot.GetByID(spotID);
+                availableSpots.Add($"Spot: {spotID} ({spot.Size}M)");
+            }
+
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]Welcome![/] What would you like to do?")
+                .PageSize(availableSpots.Count)
+                .AddChoices(availableSpots));
+
+            // Fetch the spotID from the selected choice
+            return int.Parse(selectedChoice.Split(" ")[1]);
         }
 
         private Ship SelectShipMenu()
@@ -155,7 +158,7 @@ namespace Program.GUI
 
         private void FetchAvailableParking()
         {
-            parkingStatuses = new ParkingStatus().GetAll().ToList();
+            parkingStatuses = ParkingStatus.GetAll().ToList();
             List<int> availableSpotIds = new();
 
             // Add all spots to available
@@ -211,15 +214,13 @@ namespace Program.GUI
                 .PageSize(3)
                 .AddChoices(availableChoices));
 
-            Customer customer = new(inputName);
-
             if (selectedChoice == availableChoices[0])
             {
-                StartParking(true, customer, selectedShip);
+                StartParking(true, inputName, selectedShip);
             }
             else if (selectedChoice == availableChoices[1])
             {
-                StartParking(false, customer, selectedShip);
+                StartParking(false, inputName, selectedShip);
             }
             else
             {
@@ -229,7 +230,7 @@ namespace Program.GUI
 
         private void GetData()
         {
-            spots = new Spot().GetAll().ToList();
+            spots = Spot.GetAll().ToList();
             FetchAvailableParking();
         }
 
@@ -243,12 +244,13 @@ namespace Program.GUI
             {
                 if (availableSpotIds.Contains(spotID + 1))
                 {
-                    parking.Nodes[floor].AddNode($"Spot {spotID + 1}: Available");
+                    var spot = Spot.GetByID(spotID + 1);
+                    parking.Nodes[floor].AddNode($"[green]Spot {spot.ID}: Available ({spot.Size}M)[/]");
                 }
                 else
                 {
-                    ParkingStatus taken = parkingStatuses.SingleOrDefault(x => x.Spot.ID == spotID + 1);
-                    parking.Nodes[floor].AddNode($"Spot {taken.SpotID}: {taken.Customer.Name}");
+                    var status = _logic.GetParkingStatusBySpotID(spotID + 1);
+                    parking.Nodes[floor].AddNode($"[red]Spot {status.SpotID}: Taken by {status.Customer.Name} (TODO_ADD_SHIP_NAME)[/]");
                 }
             }
         }
@@ -268,26 +270,29 @@ namespace Program.GUI
             var goBack = AnsiConsole.Confirm("Go back");
             if (!goBack)
             {
-                this._helpers.ExitProgram();
+                _helpers.ExitProgram();
             }
         }
 
         private void EndParking()
         {
             var inputName = AnsiConsole.Ask<string>("What is your name?");
+            var invoice = _logic.EndParkingByName(inputName);
 
-            var ended = this._logic.EndParkingByName(inputName);
-
-            if (!ended)
+            if (invoice == null)
             {
                 AnsiConsole.MarkupLine($"There is no active parking registered on {inputName}!");
                 Thread.Sleep(2000);
                 return;
             }
 
-            AnsiConsole.MarkupLine("Parking ended.");
-            // print invoice
-            Thread.Sleep(3000);
+            AnsiConsole.MarkupLine($"[purple]Thank you for parking with {AppConfig.GetConfig().Name}.[/]");
+
+            invoice.CalculateCost();
+            String invoiceMessage = string.Format("[green]{0}[/] - [red]{1}[/]\n [purple]Total cost:[/] [yellow]${2}[/] [blue](${3}/60min)[/]", invoice.StartedTime, invoice.EndTime, (int)invoice.TotalCost, (int)invoice.HourlyPrice);
+
+            AnsiConsole.MarkupLine(invoiceMessage);
+            Thread.Sleep(5000);
         }
     }
 }

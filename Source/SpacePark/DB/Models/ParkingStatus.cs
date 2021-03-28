@@ -20,43 +20,50 @@ namespace SpacePark.DB.Models
         [ForeignKey("SpotID")]
         public virtual Spot Spot { get; set; }
 
-        public ParkingStatus() {}
-        public ParkingStatus(int ID, DateTime arrivalTime, int customerID, int spotID) {
-            this.ID = ID;
+        public ParkingStatus() { }
+        public ParkingStatus(DateTime arrivalTime, int customerID, int spotID)
+        {
             this.ArrivalTime = arrivalTime;
             this.CustomerID = customerID;
             this.SpotID = spotID;
         }
 
-        public void Create() {
+        public void Create()
+        {
             using var ctx = new SpaceParkDbContext();
             ctx.ParkingStatus.Add(this);
             ctx.SaveChanges();
         }
 
-        public IEnumerable<ParkingStatus> GetAll() {
+        public static IEnumerable<ParkingStatus> GetAll()
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus.ToList();
         }
 
-        public ParkingStatus GetByCusomterID(int id) {
+        public static ParkingStatus GetByCustomerID(int id)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.CustomerID == id);
         }
 
-        public ParkingStatus GetByCusomterName(string name) {
+        public static ParkingStatus GetByCustomerName(string name)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.Customer.Name.ToLower() == name.ToLower());
         }
-        public ParkingStatus GetBySpotID(int id) {
+        
+        public static ParkingStatus GetBySpotID(int id)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.SpotID == id);
         }
 
-        public void Delete() {
+        public void Delete()
+        {
             using var ctx = new SpaceParkDbContext();
             ctx.ParkingStatus.Remove(this);
             ctx.SaveChanges();

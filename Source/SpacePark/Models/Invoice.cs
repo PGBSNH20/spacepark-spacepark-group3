@@ -1,19 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace SpacePark.Models
 {
     public class Invoice
     {
-            public DateTime StartedTime { get; set; }
-            public DateTime EndTime { get; set; }
-            public double TotalTime { get; set; }
-            public double HourlyPrice { get; set; }
-            public double TotalPrice { get; set; }
+        public DateTime StartedTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public decimal HourlyPrice { get; set; }
+        public decimal TotalCost { get; set; }
+
+        public Invoice(DateTime startedTime, DateTime endTime, decimal hourlyPrice)
+        {
+            StartedTime = startedTime;
+            EndTime = endTime;
+            HourlyPrice = hourlyPrice;
+        }
+
+        public Invoice CalculateCost()
+        {
+            // Using seconds as hours to simulate time passing by
+            TotalCost = (decimal)(EndTime - StartedTime).TotalSeconds * HourlyPrice;
+            return this;
         }
     }
+}
 
 

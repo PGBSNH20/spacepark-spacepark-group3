@@ -9,33 +9,40 @@ namespace SpacePark.DB.Models
         public int ID { get; set; }
         public string Name { get; set; }
 
-        public Customer() {}
-        public Customer(int ID, string name) {
+        public Customer() { }
+        public Customer(int ID, string name)
+        {
             this.ID = ID;
             this.Name = name;
         }
-        public Customer(string name) {
+        public Customer(string name)
+        {
             this.Name = name;
         }
 
-        public void Create() {
+        public int Create()
+        {
             using var ctx = new SpaceParkDbContext();
-            ctx.Customer.Add(this);
+            var data = ctx.Customer.Add(this);
             ctx.SaveChanges();
+            return data.Entity.ID;
         }
 
-        public static Customer GetByName(string name) {
+        public static Customer GetByName(string name)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.Customer
                 .SingleOrDefault(x => x.Name.ToLower() == name.ToLower());
         }
 
-        public static Customer GetByID(int id) {
+        public static Customer GetByID(int id)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.Customer
                 .SingleOrDefault(x => x.ID == id);
         }
-        public void Delete() {
+        public void Delete()
+        {
             using var ctx = new SpaceParkDbContext();
             ctx.Customer.Remove(this);
             ctx.SaveChanges();
