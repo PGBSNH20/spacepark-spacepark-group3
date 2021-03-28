@@ -42,13 +42,15 @@ namespace Program.GUI
         }
         private void DisplayMenu()
         {
+            FetchAvailableParking();
+
             AnsiConsole.MarkupLine("");
             AnsiConsole.MarkupLine("Parking slots");
             AnsiConsole.Render(new BreakdownChart()
             .FullSize()
             .Width(60)
-            .AddItem("Available", 2, Color.Green)
-            .AddItem("Taken", 4, Color.Red));
+            .AddItem("Available", availableSpotIds.Count, Color.Green)
+            .AddItem("Taken", spots.Count - availableSpotIds.Count, Color.Red));
 
             AnsiConsole.MarkupLine("");
             List<string> availableChoices = new()
