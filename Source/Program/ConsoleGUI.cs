@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SpacePark.DB.Models;
-using SpacePark.DB.Queries;
 using SpacePark.Networking;
 using Spectre.Console;
 
@@ -30,7 +29,6 @@ namespace Program
 
         private void StartParking(bool randomSlot, Customer customer)
         {
-            Query query = new();
             ParkingStatus parkingStatus = new();
             parkingStatus.Customer = customer;
 
@@ -71,7 +69,7 @@ namespace Program
             }
 
             parkingStatus.ArrivalTime = DateTime.Now;
-            query.CreateParkingStatus(parkingStatus);
+            parkingStatus.Create();
 
             AnsiConsole.MarkupLine($"You have started parking at spot: {parkingStatus.SpotID}");
             Thread.Sleep(3000);
@@ -79,8 +77,7 @@ namespace Program
 
         private void FetchAvailableParking()
         {
-            Query query = new();
-            parkingStatuses = query.GetAllParkingStatus().ToList();
+            parkingStatuses = new ParkingStatus().GetAll().ToList();
             List<int> availableSpotIds = new();
 
             // Add all spots to available
@@ -144,9 +141,7 @@ namespace Program
                     .PageSize(3)
                     .AddChoices(availableChoices));
 
-                Customer customer = new();
-                customer.Name = inputName;
-                customer.ID = 0;
+                Customer customer = new(inputName);
 
                 if (selectedChoice == availableChoices[0])
                 {
@@ -165,8 +160,7 @@ namespace Program
 
         private void GetData()
         {
-            Query query = new();
-            spots = query.GetSpots();
+            spots = new Spot().GetAll().ToList();
             FetchAvailableParking();
         }
 
@@ -184,7 +178,6 @@ namespace Program
                 }
                 else
                 {
-                    Query query = new();
                     ParkingStatus taken = parkingStatuses.SingleOrDefault(x => x.Spot.ID == spotID + 1);
                     parking.Nodes[floor].AddNode($"Spot {taken.SpotID}: {taken.Customer.Name}");
                 }
@@ -212,17 +205,16 @@ namespace Program
 
         private void EndParking()
         {
-            Query query = new();
             var inputName = AnsiConsole.Ask<string>("What is your name?");
 
-            var result = query.GetParkingStatusByName(inputName);
+            var result = new ParkingStatus().GetByCusomterName(inputName);
             if (result == null)
             {
                 AnsiConsole.MarkupLine($"There is no active parking registered on {inputName}!");
                 Thread.Sleep(2000);
             }
 
-            query.DeleteParkingStatusByName(result);
+            result.Delete();
             AnsiConsole.MarkupLine("Parking ended.");
             // print invoice
             Thread.Sleep(3000);
