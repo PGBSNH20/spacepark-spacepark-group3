@@ -252,7 +252,7 @@ namespace Program.GUI
                 else
                 {
                     var status = _logic.GetParkingStatusBySpotID(spotID + 1);
-                    parking.Nodes[floor].AddNode($"[red]Spot {status.SpotID}: Taken by {status.Customer.Name} (TODO_ADD_SHIP_NAME)[/]");
+                    parking.Nodes[floor].AddNode($"[red]Spot {status.SpotID}: Taken by {status.Customer.Name}[/]");
                 }
             }
         }
