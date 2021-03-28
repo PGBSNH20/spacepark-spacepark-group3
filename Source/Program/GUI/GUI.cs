@@ -129,7 +129,7 @@ namespace Program.GUI
             foreach (int spotID in availableSpotIds)
             {
                 var spot = Spot.GetByID(spotID);
-                availableSpots.Add($"Spot: {spotID} ({spot.Size}M)");
+                availableSpots.Add($"Spot: {spotID} ({spot.Size}M) - Price/H {spot.Price}");
             }
 
             var selectedChoice = AnsiConsole.Prompt(
@@ -147,15 +147,15 @@ namespace Program.GUI
             StarWarsAPI api = new();
             List<Ship> availableShips = api.GetStarWarsShips();
             List<string> shipNames = new();
-            api.GetStarWarsShips().ForEach(s => shipNames.Add(s.Name));
+            api.GetStarWarsShips().ForEach(s => shipNames.Add($"{s.Name} - {s.Length}M"));
 
             var selectedChoice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[purple]Please select your ship[/]")
-                .PageSize(10)
+                .PageSize(availableShips.Count)
                 .AddChoices(shipNames));
 
-            return availableShips.SingleOrDefault(ship => ship.Name == selectedChoice);
+            return availableShips.SingleOrDefault(ship => ship.Name == selectedChoice.Split(" ")[0]);
         }
 
         private void FetchAvailableParking()
@@ -247,7 +247,7 @@ namespace Program.GUI
                 if (availableSpotIds.Contains(spotID + 1))
                 {
                     var spot = Spot.GetByID(spotID + 1);
-                    parking.Nodes[floor].AddNode($"[green]Spot {spot.ID}: Available ({spot.Size}M)[/]");
+                    parking.Nodes[floor].AddNode($"[green]Spot {spot.ID}: Available ({spot.Size}M) - Price/H {spot.Price}[/]");
                 }
                 else
                 {
@@ -291,7 +291,7 @@ namespace Program.GUI
             AnsiConsole.MarkupLine($"[purple]Thank you for parking with {AppConfig.GetConfig().Name}.[/]");
 
             invoice.CalculateCost();
-            String invoiceMessage = string.Format("[green]{0}[/] - [red]{1}[/]\n [purple]Total cost:[/] [yellow]${2}[/] [blue](${3}/60min)[/]", invoice.StartedTime, invoice.EndTime, (int)invoice.TotalCost, (int)invoice.HourlyPrice);
+            String invoiceMessage = string.Format("[green]{0}[/] - [red]{1}[/]\n[purple]Total cost:[/] [yellow]${2}[/] [blue](${3}/60min)[/]", invoice.StartedTime, invoice.EndTime, (int)invoice.TotalCost, (int)invoice.HourlyPrice);
 
             AnsiConsole.MarkupLine(invoiceMessage);
             Thread.Sleep(5000);
