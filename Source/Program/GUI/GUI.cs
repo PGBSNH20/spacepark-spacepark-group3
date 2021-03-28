@@ -153,62 +153,50 @@ namespace Program.GUI
             this.availableSpotIds = availableSpotIds;
         }
 
-        private bool CanPark(string name)
-        {
-            FetchAvailableParking();
-
-            // Verifies that there are available spots
-            if (availableSpotIds.Count > 0)
-            {
-                StarWarsAPI starwars = new();
-                if (!starwars.UserFromStarWars(name))
-                {
-                    AnsiConsole.MarkupLine("Sorry, you cannot park here!");
-                    Thread.Sleep(2000);
-                    return false;
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
         private void InitiateParking()
         {
             // Check if the name comes from the Star Wars universe (eligble to park)
             var inputName = AnsiConsole.Ask<string>("What is your name?");
+            if (availableSpotIds.Count == 0){
+                AnsiConsole.MarkupLine("Sorry, come back later, no avaible spots!");
+                Thread.Sleep(2000);
+                return;
+            }
 
-            if (CanPark(inputName))
+            if (!_logic.CanUserPark(inputName))
             {
-                // TODO Check if there are any available slots
-                List<string> availableChoices = new()
-                {
-                    "Park at any available spot",
-                    "Choose a specific spot",
-                    "Go back"
-                };
+                AnsiConsole.MarkupLine("Sorry, you cannot park here!");
+                Thread.Sleep(2000);
+                return;
+            }
 
-                var selectedChoice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[purple]How would you like to park[/]?")
-                    .PageSize(3)
-                    .AddChoices(availableChoices));
+            // TODO Check if there are any available slots
+            List<string> availableChoices = new()
+            {
+                "Park at any available spot",
+                "Choose a specific spot",
+                "Go back"
+            };
 
-                Customer customer = new(inputName);
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]How would you like to park[/]?")
+                .PageSize(3)
+                .AddChoices(availableChoices));
 
-                if (selectedChoice == availableChoices[0])
-                {
-                    StartParking(true, customer);
-                }
-                else if (selectedChoice == availableChoices[1])
-                {
-                    StartParking(false, customer);
-                }
-                else
-                {
-                    DisplayMenu();
-                }
+            Customer customer = new(inputName);
+
+            if (selectedChoice == availableChoices[0])
+            {
+                StartParking(true, customer);
+            }
+            else if (selectedChoice == availableChoices[1])
+            {
+                StartParking(false, customer);
+            }
+            else
+            {
+                DisplayMenu();
             }
         }
 
