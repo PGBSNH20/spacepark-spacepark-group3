@@ -21,8 +21,7 @@ namespace SpacePark.DB.Models
         public virtual Spot Spot { get; set; }
 
         public ParkingStatus() {}
-        public ParkingStatus(int ID, DateTime arrivalTime, int customerID, int spotID) {
-            this.ID = ID;
+        public ParkingStatus(DateTime arrivalTime, int customerID, int spotID) {
             this.ArrivalTime = arrivalTime;
             this.CustomerID = customerID;
             this.SpotID = spotID;
@@ -34,23 +33,23 @@ namespace SpacePark.DB.Models
             ctx.SaveChanges();
         }
 
-        public IEnumerable<ParkingStatus> GetAll() {
+        public static IEnumerable<ParkingStatus> GetAll() {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus.ToList();
         }
 
-        public ParkingStatus GetByCusomterID(int id) {
+        public static ParkingStatus GetByCusomterID(int id) {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.CustomerID == id);
         }
 
-        public ParkingStatus GetByCusomterName(string name) {
+        public static ParkingStatus GetByCusomterName(string name) {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.Customer.Name.ToLower() == name.ToLower());
         }
-        public ParkingStatus GetBySpotID(int id) {
+        public static ParkingStatus GetBySpotID(int id) {
             using var ctx = new SpaceParkDbContext();
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.SpotID == id);

@@ -18,10 +18,11 @@ namespace SpacePark.DB.Models
             this.Name = name;
         }
 
-        public void Create() {
+        public int Create() {
             using var ctx = new SpaceParkDbContext();
-            ctx.Customer.Add(this);
+            var data = ctx.Customer.Add(this);
             ctx.SaveChanges();
+            return data.Entity.ID;
         }
 
         public static Customer GetByName(string name) {

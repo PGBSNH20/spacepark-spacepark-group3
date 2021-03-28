@@ -21,17 +21,16 @@ namespace Program.GUI
 
         public GUI(string applicationName)
         {
-            this._applicationName = applicationName;
-            this._helpers = new Helpers(_applicationName);
-            this._logic = new Logic();
+            _applicationName = applicationName;
+            _helpers = new Helpers(_applicationName);
+            _logic = new Logic();
             // Fetches from the database
             GetData();
-
         }
 
         public void LoadGUI()
         {
-            this._helpers.WelcomeMessage();
+            _helpers.WelcomeMessage();
 
             while (true)
             {
@@ -78,60 +77,63 @@ namespace Program.GUI
             }
             else
             {
-                this._helpers.ExitProgram();
+                _helpers.ExitProgram();
             }
         }
-        private void StartParking(bool randomSlot, Customer customer)
+        private void StartParking(bool randomSlot, string name)
         {
-            ParkingStatus parkingStatus = new();
-            parkingStatus.Customer = customer;
+            int spotID;
 
             FetchAvailableParking();
 
             if (randomSlot)
-            {
-                Random rand = new();
-                parkingStatus.SpotID = availableSpotIds[rand.Next(0, availableSpotIds.Count - 1)];
-            }
+                spotID = RandomizeParkinSlot();
             else
+                spotID = PromptUserSelectionSlot();
+
+            _logic.CreateParkingStatus(name, spotID);
+
+            AnsiConsole.MarkupLine($"You have started parking at spot: {spotID}");
+            Thread.Sleep(3000);
+        }
+
+        private int RandomizeParkinSlot() {
+            Random rand = new();
+            return availableSpotIds[rand.Next(0, availableSpotIds.Count - 1)];
+        }
+
+        private int PromptUserSelectionSlot()
+        {
+            var tree = new Tree("Available parking slots");
+            var parking = tree.AddNode("[purple]Available parking slots[/]");
+
+            for (int floor = 0; floor < Math.Min(availableSpotIds.Count, spotsPerFloor); floor++)
             {
-                var tree = new Tree("Available parking slots");
-                var parking = tree.AddNode("[purple]Available parking slots[/]");
-
-                for (int floor = 0; floor < Math.Min(availableSpotIds.Count, spotsPerFloor); floor++)
-                {
-                    AddSpotsToTree(floor, parking);
-                }
-
-                AnsiConsole.Render(tree);
-                AnsiConsole.MarkupLine("");
-
-                List<string> availableSpots = new();
-                foreach (int spotID in availableSpotIds)
-                {
-                    availableSpots.Add($"Spot: {spotID}");
-                }
-
-                var selectedChoice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[purple]Welcome![/] What would you like to do?")
-                    .PageSize(availableSpots.Count)
-                    .AddChoices(availableSpots));
-
-                // Fetch the spotID from the selected choice
-                parkingStatus.SpotID = int.Parse(selectedChoice[selectedChoice.IndexOf(" ")..]);
+                AddSpotsToTree(floor, parking);
             }
 
-            parkingStatus.ArrivalTime = DateTime.Now;
-            parkingStatus.Create();
+            AnsiConsole.Render(tree);
+            AnsiConsole.MarkupLine("");
 
-            AnsiConsole.MarkupLine($"You have started parking at spot: {parkingStatus.SpotID}");
-            Thread.Sleep(3000);
+            List<string> availableSpots = new();
+            foreach (int spotID in availableSpotIds)
+            {
+                availableSpots.Add($"Spot: {spotID}");
+            }
+
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]Welcome![/] What would you like to do?")
+                .PageSize(availableSpots.Count)
+                .AddChoices(availableSpots));
+
+            // Fetch the spotID from the selected choice
+            return int.Parse(selectedChoice[selectedChoice.IndexOf(" ")..]);
         }
 
         private void FetchAvailableParking()
         {
-            parkingStatuses = new ParkingStatus().GetAll().ToList();
+            parkingStatuses = ParkingStatus.GetAll().ToList();
             List<int> availableSpotIds = new();
 
             // Add all spots to available
@@ -184,15 +186,13 @@ namespace Program.GUI
                 .PageSize(3)
                 .AddChoices(availableChoices));
 
-            Customer customer = new(inputName);
-
             if (selectedChoice == availableChoices[0])
             {
-                StartParking(true, customer);
+                StartParking(true, inputName);
             }
             else if (selectedChoice == availableChoices[1])
             {
-                StartParking(false, customer);
+                StartParking(false, inputName);
             }
             else
             {
@@ -202,7 +202,7 @@ namespace Program.GUI
 
         private void GetData()
         {
-            spots = new Spot().GetAll().ToList();
+            spots = Spot.GetAll().ToList();
             FetchAvailableParking();
         }
 
@@ -220,8 +220,8 @@ namespace Program.GUI
                 }
                 else
                 {
-                    ParkingStatus taken = parkingStatuses.SingleOrDefault(x => x.Spot.ID == spotID + 1);
-                    parking.Nodes[floor].AddNode($"Spot {taken.SpotID}: {taken.Customer.Name}");
+                    var status = _logic.GetParkingStatusBySpotID(spotID + 1);
+                    parking.Nodes[floor].AddNode($"Spot {status.SpotID}: Taken by ${status.Customer.Name}");
                 }
             }
         }

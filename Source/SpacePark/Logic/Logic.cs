@@ -1,3 +1,4 @@
+using System;
 using SpacePark.DB.Models;
 using SpacePark.Networking;
 namespace SpacePark.Logic
@@ -6,10 +7,9 @@ namespace SpacePark.Logic
     {
         public bool EndParkingByName(string name)
         {
-            var res = new ParkingStatus().GetByCusomterName(name);
+            var res = ParkingStatus.GetByCusomterName(name);
             if (res == null)
                 return false;
-
 
             Customer.GetByID(res.CustomerID).Delete();
             return true;
@@ -17,7 +17,6 @@ namespace SpacePark.Logic
 
         public bool CanUserPark(string name)
         {
-
             var api = new StarWarsAPI();
 
             if (!api.UserFromStarWars(name))
@@ -27,6 +26,22 @@ namespace SpacePark.Logic
                 return false;
 
             return true;
+        }
+
+        public void CreateParkingStatus(string name, int spotID) {
+            var userID = new Customer(name).Create();
+            var data = new ParkingStatus(DateTime.Now, userID, spotID);
+
+            data.Create();
+        }
+
+        public ParkingStatus GetParkingStatusBySpotID(int spotID)
+        {
+            var status = ParkingStatus.GetBySpotID(4);
+            status.Customer = Customer.GetByID(status.ID);
+            status.Spot = Spot.GetByID(status.SpotID);
+
+            return status;
         }
     }
 }

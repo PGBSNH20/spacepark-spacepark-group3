@@ -14,10 +14,17 @@ namespace SpacePark.DB.Models
         [Required]
         public decimal Price { get; set; }
 
-        public IEnumerable<Spot> GetAll() 
+        public static IEnumerable<Spot> GetAll()
         {
             using var ctx = new SpaceParkDbContext();
             return ctx.Spot.ToList();
+        }
+
+        public static Spot GetByID(int id)
+        {
+            using var ctx = new SpaceParkDbContext();
+            return ctx.Spot
+                .SingleOrDefault(x => x.ID == id);
         }
     }
 }
