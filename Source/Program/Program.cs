@@ -1,6 +1,4 @@
 ﻿using SpacePark.Config;
-using SpacePark.Logic;
-using Program.GUI;
 
 namespace Program
 {

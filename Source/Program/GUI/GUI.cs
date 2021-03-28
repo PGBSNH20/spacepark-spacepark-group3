@@ -21,17 +21,17 @@ namespace Program.GUI
 
         public GUI(string applicationName)
         {
-            this._applicationName = applicationName;
-            this._helpers = new Helpers(_applicationName);
-            this._logic = new Logic();
+            _applicationName = applicationName;
+            _helpers = new Helpers(_applicationName);
+            _logic = new Logic();
+
             // Fetches from the database
             GetData();
-
         }
 
         public void LoadGUI()
         {
-            this._helpers.WelcomeMessage();
+            _helpers.WelcomeMessage();
 
             while (true)
             {
@@ -81,7 +81,7 @@ namespace Program.GUI
                 this._helpers.ExitProgram();
             }
         }
-        private void StartParking(bool randomSlot, Customer customer)
+        private void StartParking(bool randomSlot, Customer customer, Ship ship)
         {
             ParkingStatus parkingStatus = new();
             parkingStatus.Customer = customer;
@@ -122,11 +122,35 @@ namespace Program.GUI
                 parkingStatus.SpotID = int.Parse(selectedChoice[selectedChoice.IndexOf(" ")..]);
             }
 
+            if (spots.SingleOrDefault(s => s.ID == parkingStatus.SpotID).Size <= ship.Length)
+            {
+                AnsiConsole.MarkupLine("Your ship is too big to park in this spot!");
+                Thread.Sleep(2000);
+                StartParking(false, customer, ship);
+                return;
+            }
+
             parkingStatus.ArrivalTime = DateTime.Now;
             parkingStatus.Create();
 
             AnsiConsole.MarkupLine($"You have started parking at spot: {parkingStatus.SpotID}");
             Thread.Sleep(3000);
+        }
+
+        private Ship SelectShipMenu()
+        {
+            StarWarsAPI api = new();
+            List<Ship> availableShips = api.GetStarWarsShips();
+            List<string> shipNames = new();
+            api.GetStarWarsShips().ForEach(s => shipNames.Add(s.Name));
+
+            var selectedChoice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[purple]Please select your ship[/]")
+                .PageSize(10)
+                .AddChoices(shipNames));
+
+            return availableShips.SingleOrDefault(ship => ship.Name == selectedChoice);
         }
 
         private void FetchAvailableParking()
@@ -157,7 +181,8 @@ namespace Program.GUI
         {
             // Check if the name comes from the Star Wars universe (eligble to park)
             var inputName = AnsiConsole.Ask<string>("What is your name?");
-            if (availableSpotIds.Count == 0){
+            if (availableSpotIds.Count == 0)
+            {
                 AnsiConsole.MarkupLine("Sorry, come back later, no avaible spots!");
                 Thread.Sleep(2000);
                 return;
@@ -169,6 +194,8 @@ namespace Program.GUI
                 Thread.Sleep(2000);
                 return;
             }
+
+            Ship selectedShip = SelectShipMenu();
 
             // TODO Check if there are any available slots
             List<string> availableChoices = new()
@@ -188,11 +215,11 @@ namespace Program.GUI
 
             if (selectedChoice == availableChoices[0])
             {
-                StartParking(true, customer);
+                StartParking(true, customer, selectedShip);
             }
             else if (selectedChoice == availableChoices[1])
             {
-                StartParking(false, customer);
+                StartParking(false, customer, selectedShip);
             }
             else
             {
@@ -262,7 +289,5 @@ namespace Program.GUI
             // print invoice
             Thread.Sleep(3000);
         }
-
-
     }
 }

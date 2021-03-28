@@ -13,31 +13,36 @@ namespace SpacePark.DB.Models
         [Required]
         public string Plate { get; set; }
         public int CustomerID { get; set; }
+        public int Length { get; set; }
 
         [ForeignKey("CustomerID")]
         public virtual Customer Customer { get; set; }
 
-        public Ship() {}
-        public Ship(int id, string name, string plate, int customerID) {
+        public Ship() { }
+        public Ship(int id, string name, string plate, int customerID)
+        {
             this.ID = id;
             this.Name = name;
             this.Plate = plate;
             this.CustomerID = customerID;
         }
 
-        public void Create() {
+        public void Create()
+        {
             using var ctx = new SpaceParkDbContext();
             ctx.Ship.Add(this);
             ctx.SaveChanges();
         }
 
-        public Ship GetByPlate(string plate) {
+        public Ship GetByPlate(string plate)
+        {
             using var ctx = new SpaceParkDbContext();
             return ctx.Ship
                 .SingleOrDefault(s => s.Plate.ToLower() == plate.ToLower());
         }
 
-        public void Delete() {
+        public void Delete()
+        {
             using var ctx = new SpaceParkDbContext();
             ctx.Ship.Remove(this);
             ctx.SaveChanges();
