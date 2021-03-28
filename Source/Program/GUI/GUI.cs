@@ -155,7 +155,7 @@ namespace Program.GUI
                 .PageSize(availableShips.Count)
                 .AddChoices(shipNames));
 
-            return availableShips.SingleOrDefault(ship => ship.Name == selectedChoice.Split(" ")[0]);
+            return availableShips.SingleOrDefault(ship => ship.Name == selectedChoice.Split("-")[0].Trim());
         }
 
         private void FetchAvailableParking()
