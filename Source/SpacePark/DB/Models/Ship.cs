@@ -21,10 +21,10 @@ namespace SpacePark.DB.Models
         public Ship() { }
         public Ship(int id, string name, string plate, int customerID)
         {
-            this.ID = id;
-            this.Name = name;
-            this.Plate = plate;
-            this.CustomerID = customerID;
+            ID = id;
+            Name = name;
+            Plate = plate;
+            CustomerID = customerID;
         }
 
         public void Create()
