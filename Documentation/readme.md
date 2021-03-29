@@ -21,5 +21,12 @@ We created another tasks for the our project, database migration to Migrate/sync
 We created Generate a simple invoice that should be displayed whenever the user exits their parking. The invoice should contain information such as started time, end time, total time parked, total cost and cost per hour.
 
 ## 2021-03-24
+We created many new tasks, Unit test and Domain logic to implement all the core logic of the program such as decide who is permitted to park
+
+## 2021-03-25
+We continously working with tests, Console GUI/ Menu and Ivoice.
+
+## 2021-03-26
+We pushed Unit test and Invoice.
 
 
