@@ -10,14 +10,14 @@ namespace SpacePark.DB.Models
         public string Name { get; set; }
 
         public Customer() { }
-        public Customer(int ID, string name)
+        public Customer(int id, string name)
         {
-            this.ID = ID;
-            this.Name = name;
+            ID = id;
+            Name = name;
         }
         public Customer(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public int Create()

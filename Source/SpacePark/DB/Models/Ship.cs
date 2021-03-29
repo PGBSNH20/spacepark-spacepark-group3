@@ -34,7 +34,7 @@ namespace SpacePark.DB.Models
             ctx.SaveChanges();
         }
 
-        public Ship GetByPlate(string plate)
+        public static Ship GetByPlate(string plate)
         {
             using var ctx = new SpaceParkDbContext();
             return ctx.Ship

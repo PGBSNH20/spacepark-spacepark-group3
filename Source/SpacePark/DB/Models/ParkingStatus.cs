@@ -23,9 +23,9 @@ namespace SpacePark.DB.Models
         public ParkingStatus() { }
         public ParkingStatus(DateTime arrivalTime, int customerID, int spotID)
         {
-            this.ArrivalTime = arrivalTime;
-            this.CustomerID = customerID;
-            this.SpotID = spotID;
+            ArrivalTime = arrivalTime;
+            CustomerID = customerID;
+            SpotID = spotID;
         }
 
         public void Create()
@@ -54,7 +54,6 @@ namespace SpacePark.DB.Models
             return ctx.ParkingStatus
                 .SingleOrDefault(p => p.Customer.Name.ToLower() == name.ToLower());
         }
-        
         public static ParkingStatus GetBySpotID(int id)
         {
             using var ctx = new SpaceParkDbContext();

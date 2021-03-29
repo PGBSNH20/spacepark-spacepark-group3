@@ -17,7 +17,7 @@ namespace SpacePark.DB
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(this._connString);
+            optionsBuilder.UseNpgsql(_connString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
